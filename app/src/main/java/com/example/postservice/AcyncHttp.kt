@@ -1,54 +1,79 @@
+
+
 package com.example.postservice
 
 import android.os.AsyncTask
+
 import android.util.Log
+
 import java.io.IOException
+
 import java.net.HttpURLConnection
+
 import java.net.MalformedURLException
+
 import java.net.URL
-import kotlin.properties.Delegates
 
 
-class AsyncHttp :AsyncTask<String,Int,Boolean>{
+class AsyncHttp(var name: String, var value: Double) :
 
-    var urlConnection: HttpURLConnection by Delegates.notNull<HttpURLConnection>()
-    var flg:Boolean = false
+    AsyncTask<String?, Int?, Boolean>() {
 
-    var name:String=""
-    var value:Double=0.0
+    var urlConnection: HttpURLConnection? = null
 
-    constructor(_name:String,_value:Double){
-        this.name=_name
-        this.value=_value
-    }
+    var flg = false
+
     //非同期処理
-    override fun doInBackground(vararg contents: String?): Boolean {
-        val urlinput:String = "http://10.206.0.224/upload/post.php"
+
+    override fun doInBackground(vararg p0: String?): Boolean? {
+
+        val urlinput = "http://10.206.0.224/post.php"
+
         try {
-            val url:URL = URL(urlinput)
+
+            val url = URL(urlinput)
+
             urlConnection = url.openConnection() as HttpURLConnection
-            urlConnection.requestMethod = "POST"
-            urlConnection.doOutput = true
+
+            urlConnection!!.requestMethod = "POST"
+
+            urlConnection!!.doOutput = true
 
             //POST用パラメータ
-            val postDataSample = "name="+name+"&text"+value
+
+            val postDataSample = "name=$name&text=$value"
 
             //POSTパラメータ設定
-            val out = urlConnection.outputStream
+
+            val out = urlConnection!!.outputStream
+
             out.write(postDataSample.toByteArray())
+
             out.flush()
+
             out.close()
+
             Log.d("test", postDataSample)
 
             //レスポンスを受け取る
-            urlConnection.inputStream
+
+            urlConnection!!.inputStream
+
             flg = true
+
         } catch (e: MalformedURLException) {
+
             e.printStackTrace()
+
         } catch (e: IOException) {
+
             e.printStackTrace()
+
         }
+
         return flg
+
     }
 
 }
+
